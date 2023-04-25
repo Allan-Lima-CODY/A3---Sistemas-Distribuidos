@@ -1,0 +1,22 @@
+{
+  "name": "a3sys",
+  "version": "1.0.0",
+  "description": "Projeto A3 de Sistemas Distribuidos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AllanLima-CODY/A3-Sistemas-Distribuidos.git"
+  },
+  "author": "Allan - Arthur - Levi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AllanLima-CODY/A3-Sistemas-Distribuidos/issues"
+  },
+  "homepage": "https://github.com/AllanLima-CODY/A3-Sistemas-Distribuidos#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
