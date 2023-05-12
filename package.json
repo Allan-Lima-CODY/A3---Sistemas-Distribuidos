@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Projeto A3 de Sistemas Distribuidos",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +18,8 @@
   },
   "homepage": "https://github.com/AllanLima-CODY/A3-Sistemas-Distribuidos#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "bcryptjs": "^2.4.3",
+    "express": "^4.18.2",
+    "mysql2": "^3.2.4"
   }
 }
