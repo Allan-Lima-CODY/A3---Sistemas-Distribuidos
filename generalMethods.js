@@ -1,4 +1,4 @@
-import exportedLogin from "../routes/login.js";
+import exportedLogin from "./routes/login.js";
 
 function VerifyLoggedAndAdmin(res) {
     if(exportedLogin.login.UserID > 0) {
@@ -15,4 +15,17 @@ function VerifyLoggedAndAdmin(res) {
     }
 }
 
-export default VerifyLoggedAndAdmin;
+function VerifyLogged(res) {
+    if(exportedLogin.login.UserID > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+const methods = {
+    VerifyLoggedAndAdmin,
+    VerifyLogged
+}
+
+export default methods;
