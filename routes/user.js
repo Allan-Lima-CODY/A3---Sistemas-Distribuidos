@@ -2,7 +2,6 @@ import express from "express";
 import connection from "../connection.js";
 import methods from "../generalMethods.js";
 import exportedLogin from "./login.js";
-import bcrypt from "bcryptjs";
 
 const userRoutes = express.Router();
 

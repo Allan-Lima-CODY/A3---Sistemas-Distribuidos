@@ -6,7 +6,7 @@ const loginRoutes = express.Router();
 let login = {};
 
 loginRoutes.get("/login", (req, res, error) => {
-    if(login.length === 0) {
+    if(Object.keys(login).length === 0) {
         const sql = "SELECT UserID, " +
                            "Name, " +
                            "Email, " +
@@ -36,7 +36,7 @@ loginRoutes.get("/login", (req, res, error) => {
 });
 
 loginRoutes.get("/logout", (req, res, error) => {
-    if(login.length > 0) {
+    if (Object.keys(login).length !== 0) {
         Object.assign(login, {});
 
         res.status(200).json({ message: 'Logout successful!' });

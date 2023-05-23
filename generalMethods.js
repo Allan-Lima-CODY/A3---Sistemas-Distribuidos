@@ -1,4 +1,5 @@
 import exportedLogin from "./routes/login.js";
+import connection from "./connection.js";
 
 function VerifyLoggedAndAdmin(res) {
     if(exportedLogin.login.UserID > 0) {
@@ -23,9 +24,14 @@ function VerifyLogged(res) {
     }
 }
 
+function VerifyHadAddress(res) {
+    
+}
+
 const methods = {
     VerifyLoggedAndAdmin,
-    VerifyLogged
+    VerifyLogged,
+    VerifyHadAddress
 }
 
 export default methods;
