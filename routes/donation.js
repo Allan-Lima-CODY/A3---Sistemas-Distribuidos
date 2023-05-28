@@ -68,32 +68,29 @@ donationRoutes.get("/donation", (req, res, error) => {
     }
 });
 
-addressRoutes.post("/address", async (req, res, error) => {
+donationRoutes.get("/listdonation", async (req, res, error) => {
     if (methods.VerifyLogged()) {
-        const { CEP, UserID, Number, Complementary } = req.body;
-
         try {
-            const response = await axios.get(`https://viacep.com.br/ws/${CEP}/json/`);
-            const { localidade, uf, bairro, logradouro } = response.data;
+            const response = await axios.get(`http://localhost:3000/listlocaldonation`);
 
-            console.log(response.data);
-
-            const sql = 'INSERT INTO useraddress(CEP, UserID, Number, Complementary, City, State, Province, PublicPlace) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-            const values = [CEP, UserID, Number, Complementary, localidade, uf, bairro, logradouro];
-
-            connection.query(sql, values, (error, results) => {
-                if (results.affectedRows > 0) {
-                    if (!error) {
-                        res.status(200).json({ msg: "Register successfully!" });
-                    } else {
-                        res.status(500).json({ msg: "Error registering data from the database." });
-                    }
-                } else {
-                    res.status(500).json({ msg: "A error ocurred!", error });
-                }
-            });
+            res.json({ msg: "Here you can see the donations locals available", donationLocals: response.data });
         } catch (error) {
-            res.status(400).json({ error: 'CEP inválido' });
+            res.status(400).json({ error: 'Unable to retrieve data' });
+        }
+    } else {
+        res.json({ msg: "You can't create a user when logged!" });
+    }
+});
+
+donationRoutes.post("/donation/id:", async (req, res, error) => {
+    if (methods.VerifyLogged()) {
+        try {
+            const id = req.params.id;
+            const response = await axios.get(`http://localhost:3000/getlocaldonation/${id}`);
+
+            console.log(response);
+        } catch (error) {
+            res.status(400).json({ error: 'Unable to retrieve data' });
         }
     } else {
         res.json({ msg: "You can't create a user when logged!" });
