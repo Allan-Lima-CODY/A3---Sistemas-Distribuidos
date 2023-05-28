@@ -98,7 +98,7 @@ addressRoutes.post("/address", async (req, res, error) => {
                     }
                 });
             } catch (error) {
-                res.status(400).json({ error: 'CEP inválido' });
+                res.status(400).json({ error: 'Invalid CEP!' });
             }
         }
     } else {
