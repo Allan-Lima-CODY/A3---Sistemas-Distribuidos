@@ -65,7 +65,7 @@ userRoutes.get("/users", (req, res, error) => {
 });
 
 userRoutes.post("/users", (req, res, error) => {
-    if(!methods.VerifyLogged(res)){
+    if(methods.VerifyLogged()){
         const sql = 'INSERT INTO users(Name, Email, Password, CellPhone, CPF, Admin) VALUES (?, ?, ?, ?, ?, ?)';
         const {Name, Email, Password, CellPhone, CPF, Admin} = req.body;
 
@@ -86,7 +86,7 @@ userRoutes.post("/users", (req, res, error) => {
 });
 
 userRoutes.put("/users", (req, res, error) => {
-    if(methods.VerifyLogged(res)){
+    if(methods.VerifyLogged()){
         let sql = "UPDATE users SET Name = ?, " +
                                    "Email = ?, " +
                                    "Password = ?, " +
@@ -96,17 +96,17 @@ userRoutes.put("/users", (req, res, error) => {
                                    "WHERE UserID = " + exportedLogin.login.UserID;
         const {Name, Email, Password, CellPhone, CPF, Admin} = req.body;
 
-    connection.query(sql, [Name, Email, Password, CellPhone, CPF, Admin], (error, results) => {
-        if (results.affectedRows > 0) {
-            if (!error) {
-              res.status(200).json({ msg: "Data updated successfully!" });
+        connection.query(sql, [Name, Email, Password, CellPhone, CPF, Admin], (error, results) => {
+            if (results.affectedRows > 0) {
+                if (!error) {
+                    res.status(200).json({ msg: "Data updated successfully!" });
+                } else {
+                    res.status(500).json({ msg: "Error updating data from the database." });
+                }
             } else {
-              res.status(500).json({ msg: "Error updating data from the database." });
+                res.status(404).json({ msg: "Data not found!" });
             }
-        } else {
-            res.status(404).json({ msg: "Data not found!" });
-        }
-    });
+        });
     }
 });
 
@@ -123,6 +123,20 @@ userRoutes.delete("/users", (req, res, error) => {
             sql += `${Column} = ?`;
             params.push(Value);
         }
+
+        connection.query(sql, params, (error, results) => {
+            if (results.affectedRows > 0) {
+                if (!error) {
+                  res.status(200).json({ msg: "Data deleted successfully!" });
+                } else {
+                  res.status(500).json({ msg: "Error deleting data from the database." });
+                }
+            } else {
+                res.status(404).json({ msg: "Data not found!" });
+            }
+        });
+    } else if (methods.VerifyLogged()) {
+        let sql = 'DELETE FROM users WHERE UserID = ' + exportedLogin.login.UserID;
 
         connection.query(sql, params, (error, results) => {
             if (results.affectedRows > 0) {
