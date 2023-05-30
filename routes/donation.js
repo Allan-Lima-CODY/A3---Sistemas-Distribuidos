@@ -1,6 +1,8 @@
 import express from "express";
 import axios from "axios";
 import connection from "../connection.js"
+import exportedLogin from "./login.js";
+import methods from "../generalMethods.js";
 
 const donationRoutes = express.Router();
 
@@ -71,29 +73,107 @@ donationRoutes.get("/donation", (req, res, error) => {
 donationRoutes.get("/listdonation", async (req, res, error) => {
     if (methods.VerifyLogged()) {
         try {
-            const response = await axios.get(`http://localhost:3000/listlocaldonation`);
+            const response = await axios.get(`http://localhost:4000/listlocaldonation`);
 
             res.json({ msg: "Here you can see the donations locals available", donationLocals: response.data });
         } catch (error) {
             res.status(400).json({ error: 'Unable to retrieve data' });
         }
     } else {
+        res.json({ msg: "You can't see the local donations when not logged!" });
+    }
+});
+
+donationRoutes.post("/donation/:id", async (req, res, error) => {
+    if (methods.VerifyLogged()) {
+        const hasAddress = await methods.VerifyIfHadAddress();
+
+        if (hasAddress) {
+            try {
+                const id = req.params.id;
+
+                const sql = 'INSERT INTO donations(UserDataID, Object, Amount, Size, Description, FinallyConsiderations, DonationsInstitution) VALUES (?, ?, ?, ?, ?, ?, ?)';
+                const { Object, Amount, Size, Description, FinallyConsiderations } = req.body;
+
+                const DonationsInstitution = await axios.get(`http://localhost:4000/getlocaldonation/${id}`);
+                console.log(DonationsInstitution.data);
+
+                connection.query(sql, [exportedLogin.login.UserID, Object, Amount, Size, Description, FinallyConsiderations, JSON.stringify(DonationsInstitution.data)], (error, results) => {
+                    if (results.affectedRows > 0) {
+                        if (!error) {
+                            res.status(200).json({ msg: "Register successfully!" });
+                        } else {
+                            res.status(500).json({ msg: "Error registering data from the database." });
+                        }
+                    } else {
+                        res.status(500).json({ msg: "A error ocurred!", error });
+                    }
+                });
+            } catch (error) {
+                res.status(400).json({ error: 'Unable to retrieve data' });
+            }
+        } else {
+            res.status(200).json({ msg: "You had an address registered!" });
+        }
+    } else {
         res.json({ msg: "You can't create a user when logged!" });
     }
 });
 
-donationRoutes.post("/donation/id:", async (req, res, error) => {
+donationRoutes.put("/donation/:id", async (req, res, error) => {
     if (methods.VerifyLogged()) {
-        try {
-            const id = req.params.id;
-            const response = await axios.get(`http://localhost:3000/getlocaldonation/${id}`);
+        let sql = "UPDATE donations SET Object = ?, " +
+            "Amount = ?, " +
+            "Size = ?, " +
+            "Description = ?, " +
+            "FinallyConsiderations = ?, " +
+            "DonationsInstitution = ? "
+        "WHERE DonationID = ?";
 
-            console.log(response);
-        } catch (error) {
-            res.status(400).json({ error: 'Unable to retrieve data' });
+        const { Object, Amount, Size, Description, FinallyConsiderations, DonationID } = req.body;
+        const id = req.params.id;
+        const DonationsInstitution = await axios.get(`http://localhost:4000/getlocaldonation/${id}`);
+        console.log(DonationsInstitution.data);
+
+        connection.query(sql, [Object, Amount, Size, Description, FinallyConsiderations, JSON.stringify(DonationsInstitution.data), DonationID], (error, results) => {
+            if (results.affectedRows > 0) {
+                if (!error) {
+                    res.status(200).json({ msg: "Data updated successfully!" });
+                } else {
+                    res.status(500).json({ msg: "Error updating data from the database." });
+                }
+            } else {
+                res.status(404).json({ msg: "Data not found!" });
+            }
+        });
+    }
+});
+
+donationRoutes.delete("/donation", (req, res, error) => {
+    if (methods.VerifyLoggedAndAdmin(res)) {
+        let sql = 'DELETE FROM donation WHERE ';
+        const { Column, Value } = req.body;
+        let params = [];
+
+        if (typeof Value === 'string') {
+            sql += `${Column} LIKE ?`;
+            params.push(`%${Value}%`);
+        } else {
+            sql += `${Column} = ?`;
+            params.push(Value);
         }
-    } else {
-        res.json({ msg: "You can't create a user when logged!" });
+
+        connection.query(sql, params, (error, results) => {
+            if (results.affectedRows > 0) {
+                if (!error) {
+                    res.status(200).json({ msg: "Data deleted successfully!" });
+                } else {
+                    res.status(500).json({ msg: "Error deleting data from the database." });
+                }
+            } else {
+                res.status(404).json({ msg: "Data not found!" });
+            }
+        });
     }
 });
 

@@ -16,5 +16,3 @@ const port = 3000;
 app.listen(port, () => {
     console.log("Server activate on port ", port);
 });
-
-//Corrigir problema no método de verificar se é admin ou não após logar com uma conta não admin, deslogar e logar novamente em uma conta admin dessa vez.

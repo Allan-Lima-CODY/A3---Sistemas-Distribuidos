@@ -26,31 +26,30 @@ function VerifyLogged() {
     }
 }
 
-async function VerifyIfHadAddress(res) {
+async function VerifyIfHadAddress() {
     const sql = "SELECT UserID FROM useraddress WHERE UserID = " + exportedLogin.login.UserID;
-
+  
     try {
-        const results = await new Promise((resolve, reject) => {
-            connection.query(sql, (error, results) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(results);
-                }
-            });
+      const results = await new Promise((resolve, reject) => {
+        connection.query(sql, (error, results) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(results);
+          }
         });
-
-        if (results.length > 0) {
-            res.status(200).json({ msg: "You had an address registered!" });
-            return false;
-        } else {
-            return true;
-        }
-    } catch (error) {
-        console.error(error);
+      });
+  
+      if (results.length > 0) {
+        return true;
+      } else {
         return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
     }
-}
+  }
 
 const methods = {
     VerifyLoggedAndAdmin,
