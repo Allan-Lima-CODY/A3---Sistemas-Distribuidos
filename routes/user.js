@@ -20,7 +20,7 @@ userRoutes.get("/userslist", (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Data returned with success!", users: results });
                 } else {
-                    res.status(404).json({ msg: error });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(404).json({ msg: "Data not found!" });
@@ -55,7 +55,7 @@ userRoutes.get("/users", (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Data returned successfully!", users: results });
                 } else {
-                    res.status(500).json({ msg: "Error returning data from the database." });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(404).json({ msg: "Data not found!" });
@@ -74,7 +74,7 @@ userRoutes.post("/users", (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Register successfully!" });
                 } else {
-                    res.status(500).json({ msg: "Error registering data from the database." });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(500).json({ msg: "A error ocurred!", error });
@@ -101,7 +101,7 @@ userRoutes.put("/users", (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Data updated successfully!" });
                 } else {
-                    res.status(500).json({ msg: "Error updating data from the database." });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(404).json({ msg: "Data not found!" });
@@ -130,25 +130,25 @@ userRoutes.delete("/users", (req, res, error) => {
                                             res.status(404).json({ msg: "User data not found!" });
                                         }
                                     } else {
-                                        res.status(500).json({ msg: "Error deleting user data from the database." });
+                                        res.status(500).json({ msg: "Error deleting user data from the database.", Error: error });
                                     }
                                 });
                             } else {
                                 res.status(404).json({ msg: "Address data not found!" });
                             }
                         } else {
-                            res.status(500).json({ msg: "Error deleting address data from the database." });
+                            res.status(500).json({ msg: "Error deleting address data from the database.", Error: error });
                         }
                     });
                 } else {
                     res.status(404).json({ msg: "Donation data not found!" });
                 }
             } else {
-                res.status(500).json({ msg: "Error deleting donation data from the database." });
+                res.status(500).json({ msg: "Error deleting donation data from the database.", Error: error });
             }
         });
     } else {
-        res.status(404).json({ msg: "You are note logged for execute this command." });
+        res.status(400).json({ msg: "You are note logged for execute this command." });
     }
 });
 

@@ -23,7 +23,7 @@ donationRoutes.get("/donationlist", (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Data returned with success!", donation: results });
                 } else {
-                    res.status(404).json({ msg: error });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(404).json({ msg: "Data not found!" });
@@ -61,7 +61,7 @@ donationRoutes.get("/donation", (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Data returned successfully!", donation: results });
                 } else {
-                    res.status(500).json({ msg: "Error returning data from the database." });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(404).json({ msg: "Data not found!" });
@@ -103,20 +103,20 @@ donationRoutes.post("/donation/:id", async (req, res, error) => {
                         if (!error) {
                             res.status(200).json({ msg: "Register successfully!" });
                         } else {
-                            res.status(500).json({ msg: "Error registering data from the database." });
+                            res.status(500).json({ msg: "Error registering data from the database.", Error: error });
                         }
                     } else {
-                        res.status(500).json({ msg: "A error ocurred!", error });
+                        res.status(500).json({ msg: "A error ocurred!", Error: error });
                     }
                 });
             } catch (error) {
                 res.status(400).json({ error: 'Unable to retrieve data' });
             }
         } else {
-            res.status(200).json({ msg: "You had an address registered!" });
+            res.status(400).json({ msg: "You had an address registered!" });
         }
     } else {
-        res.json({ msg: "You can't create a user when logged!" });
+        res.status(400).json({ msg: "You can't create a user when logged!" });
     }
 });
 
@@ -140,7 +140,7 @@ donationRoutes.put("/donation/:id", async (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Data updated successfully!" });
                 } else {
-                    res.status(500).json({ msg: "Error updating data from the database." });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(404).json({ msg: "Data not found!" });
@@ -168,7 +168,7 @@ donationRoutes.delete("/donation", (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Data deleted successfully!" });
                 } else {
-                    res.status(500).json({ msg: "Error deleting data from the database." });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(404).json({ msg: "Data not found!" });

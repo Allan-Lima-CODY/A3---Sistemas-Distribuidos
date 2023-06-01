@@ -8,12 +8,12 @@ function VerifyLoggedAndAdmin(res) {
         if (exportedLogin.login.Admin === 1) {
             return true;
         } else {
-            res.status(404).json({ msg: "You are not an admin to request this command!" });
+            res.status(400).json({ msg: "You are not an admin to request this command!" });
             return false;
         }
     } else {
         console.log(exportedLogin.login);
-        res.status(404).json({ msg: "You are not logged in!" });
+        res.status(400).json({ msg: "You are not logged in!" });
         return false;
     }
 }

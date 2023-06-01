@@ -24,7 +24,7 @@ addressRoutes.get("/addresslist", (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Data returned with success!", address: results });
                 } else {
-                    res.status(404).json({ msg: error });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(404).json({ msg: "Data not found!" });
@@ -63,7 +63,7 @@ addressRoutes.get("/address", (req, res, error) => {
                 if (!error) {
                     res.status(200).json({ msg: "Data returned successfully!", address: results });
                 } else {
-                    res.status(500).json({ msg: "Error returning data from the database." });
+                    res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                 }
             } else {
                 res.status(404).json({ msg: "Data not found!" });
@@ -94,21 +94,21 @@ addressRoutes.post("/address", async (req, res, error) => {
                             if (!error) {
                                 res.status(200).json({ msg: "Register successfully!" });
                             } else {
-                                res.status(500).json({ msg: "Error registering data from the database." });
+                                res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                             }
                         } else {
                             res.status(500).json({ msg: "An error occurred!", error });
                         }
                     });
                 } catch (error) {
-                    res.status(400).json({ error: 'Invalid CEP!' });
+                    res.status(404).json({ error: 'Invalid CEP!' });
                 }
             } else {
                 res.status(200).json({ msg: "You already have an address registered!" });
             }
         } catch (error) {
             console.error(error);
-            res.status(500).json({ msg: "Error verifying address data from the database." });
+            res.status(500).json({ msg: "Error verifying address data from the database.",  Error: error });
         }
     } else {
         res.json({ msg: "You can't create a user when logged in!" });
@@ -140,14 +140,14 @@ addressRoutes.put("/address", async (req, res) => {
                     if (!error) {
                         res.status(200).json({ msg: "Data updated successfully!" });
                     } else {
-                        res.status(500).json({ msg: "Error updating data from the database." });
+                        res.status(500).json({ msg: "Error returning data from the database.", Error: error });
                     }
                 } else {
                     res.status(404).json({ msg: "Data not found!" });
                 }
             });
         } catch (error) {
-            res.status(400).json({ msg: "Invalid CEP!" });
+            res.status(404).json({ msg: "Invalid CEP!" });
         }
     }
 });

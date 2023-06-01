@@ -4,10 +4,10 @@ import connection from "../connection.js";
 const loginRoutes = express.Router();
 
 const exportedLogin = {
-    login: {}, // objeto login vazio
+    login: {},
     loginRoutes,
     clearLogin: function () {
-        this.login = {}; // redefine o objeto login para um objeto vazio
+        this.login = {};
     },
 };
 
@@ -25,9 +25,9 @@ loginRoutes.post("/login", (req, res, error) => {
 
         const { Email, Password } = req.body;
 
-        connection.query(sql, [Email, Password], (err, results) => {
+        connection.query(sql, [Email, Password], (error, results) => {
             if (err) {
-                res.status(500).json({ message: 'Unable to retrieve data from the database.' });
+                res.status(500).json({ message: 'Unable to retrieve data from the database.', Error: error });
             } else if (results.length === 0) {
                 res.status(404).json({ message: 'Email or password is incorrect.' });
             } else if (results.length > 0) {
