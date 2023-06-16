@@ -65,7 +65,7 @@ userRoutes.get("/users", (req, res, error) => {
 });
 
 userRoutes.post("/users", (req, res, error) => {
-    if (methods.VerifyLogged()) {
+    if (!methods.VerifyLogged()) {
         const sql = 'INSERT INTO users(Name, Email, Password, CellPhone, CPF, Admin) VALUES (?, ?, ?, ?, ?, ?)';
         const { Name, Email, Password, CellPhone, CPF, Admin } = req.body;
 
