@@ -151,7 +151,7 @@ donationRoutes.put("/donation/:id", async (req, res, error) => {
 
 donationRoutes.delete("/donation", (req, res, error) => {
     if (methods.VerifyLoggedAndAdmin(res)) {
-        let sql = 'DELETE FROM donation WHERE ';
+        let sql = 'DELETE FROM donations WHERE ';
         const { Column, Value } = req.body;
         let params = [];
 

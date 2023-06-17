@@ -92,8 +92,8 @@ userRoutes.put("/users", (req, res, error) => {
             "Password = ?, " +
             "CellPhone = ?, " +
             "CPF = ?, " +
-            "Admin = ?"
-        "WHERE UserID = " + exportedLogin.login.UserID;
+            "Admin = ? " +
+            "WHERE UserID = " + exportedLogin.login.UserID;
         const { Name, Email, Password, CellPhone, CPF, Admin } = req.body;
 
         connection.query(sql, [Name, Email, Password, CellPhone, CPF, Admin], (error, results) => {
@@ -113,19 +113,22 @@ userRoutes.put("/users", (req, res, error) => {
 userRoutes.delete("/users", (req, res, error) => {
     if (methods.VerifyLogged()) {
         let deleteUser = 'DELETE FROM users WHERE UserID = ' + exportedLogin.login.UserID;
-        let deleteAdressUser = 'DELETE FROM useraddress WHERE UserID = ' + exportedLogin.login.UserID;
+        let deleteAddressUser = 'DELETE FROM useraddress WHERE UserID = ' + exportedLogin.login.UserID;
         let deleteDonationUser = 'DELETE FROM donations WHERE UserDataID = ' + exportedLogin.login.UserID;
 
         connection.query(deleteDonationUser, (error, donationResults) => {
             if (!error) {
                 if (donationResults.affectedRows > 0) {
-                    connection.query(deleteAdressUser, (error, addressResults) => {
+                    // Doações foram excluídas, tentar excluir endereços
+                    connection.query(deleteAddressUser, (error, addressResults) => {
                         if (!error) {
                             if (addressResults.affectedRows > 0) {
+                                // Endereços excluídos com sucesso, excluir usuário
                                 connection.query(deleteUser, (error, userResults) => {
                                     if (!error) {
                                         if (userResults.affectedRows > 0) {
                                             res.status(200).json({ msg: "Data deleted successfully!" });
+                                            exportedLogin.clearLogin();
                                         } else {
                                             res.status(404).json({ msg: "User data not found!" });
                                         }
@@ -134,21 +137,57 @@ userRoutes.delete("/users", (req, res, error) => {
                                     }
                                 });
                             } else {
-                                res.status(404).json({ msg: "Address data not found!" });
+                                // Nenhum endereço encontrado, excluir apenas usuário
+                                connection.query(deleteUser, (error, userResults) => {
+                                    if (!error) {
+                                        if (userResults.affectedRows > 0) {
+                                            res.status(200).json({ msg: "Data deleted successfully!" });
+                                            exportedLogin.clearLogin();
+                                        } else {
+                                            res.status(404).json({ msg: "User data not found!" });
+                                        }
+                                    } else {
+                                        res.status(500).json({ msg: "Error deleting user data from the database.", Error: error });
+                                    }
+                                });
                             }
                         } else {
                             res.status(500).json({ msg: "Error deleting address data from the database.", Error: error });
                         }
                     });
                 } else {
-                    res.status(404).json({ msg: "Donation data not found!" });
+                    // Nenhuma doação encontrada, excluir apenas endereços (se existirem)
+                    connection.query(deleteAddressUser, (error, addressResults) => {
+                        if (!error) {
+                            if (addressResults.affectedRows > 0) {
+                                res.status(200).json({ msg: "Data deleted successfully!" });
+                                exportedLogin.clearLogin();
+                            } else {
+                                // Nenhum endereço encontrado, excluir apenas usuário
+                                connection.query(deleteUser, (error, userResults) => {
+                                    if (!error) {
+                                        if (userResults.affectedRows > 0) {
+                                            res.status(200).json({ msg: "Data deleted successfully!" });
+                                            exportedLogin.clearLogin();
+                                        } else {
+                                            res.status(404).json({ msg: "User data not found!" });
+                                        }
+                                    } else {
+                                        res.status(500).json({ msg: "Error deleting user data from the database.", Error: error });
+                                    }
+                                });
+                            }
+                        } else {
+                            res.status(500).json({ msg: "Error deleting address data from the database.", Error: error });
+                        }
+                    });
                 }
             } else {
                 res.status(500).json({ msg: "Error deleting donation data from the database.", Error: error });
             }
         });
     } else {
-        res.status(400).json({ msg: "You are note logged for execute this command." });
+        res.status(400).json({ msg: "You are not logged in to execute this command." });
     }
 });
 
